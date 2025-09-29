@@ -40,7 +40,28 @@ sudo apt update && sudo apt upgrade -y
 - Helps to prevent conflicts during the release upgrade and frees disk space.
 - Not mandatory, but improves system cleanliness before upgrading.
 
-## 4. Upgrading Ubuntu Deskop 22.04 LTS to 24.04 LTS
+## 4. Update manual packages
+
+Error occured
+
+bash linux-generic-hwe-22.04 : Depends: linux-image-generic-hwe-22.04 (= 6.8.0-84.84~22.04.1) but 5.15.0.48.48 is to be installed
+                          Depends: linux-headers-generic-hwe-22.04 (= 6.8.0-84.84~22.04.1) but 5.15.0.48.48 is to be installed
+                          Recommends: ubuntu-kernel-accessories but it is not installable
+
+
+- Some packages needed to be manually updated before an update to Ubunutu 22.04 via UI or CLI is possible.
+- Use the following command:
+```bash sudo apt install <package>``` 
+
+- Reboot is necessary after this
+
+## 4b. Upgrading via CLI
+
+```bash sudo do-release-upgrade```
+
+- Now the new Ubunut version can be installed
+
+## 4b. Alternative: Upgrading Ubuntu Deskop 22.04 LTS to 24.04 LTS
 
 1. Run the update-manager application.
 2. In Update Manager, click the Settings... button, and enter your password to start the Software Sources application.
@@ -56,3 +77,5 @@ sudo apt update && sudo apt upgrade -y
 12. Follow the on-screen instructions.
 
 (Credits: https://help.ubuntu.com/community/NobleUpgrades#Upgrading_Ubuntu_Desktops_to_24.04_LTS)
+
+
