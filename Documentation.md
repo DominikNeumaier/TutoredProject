@@ -42,12 +42,9 @@ sudo apt update && sudo apt upgrade -y
 
 ## 4. Update manual packages
 
-Error occured
+An error occured:
 
-bash linux-generic-hwe-22.04 : Depends: linux-image-generic-hwe-22.04 (= 6.8.0-84.84~22.04.1) but 5.15.0.48.48 is to be installed
-                          Depends: linux-headers-generic-hwe-22.04 (= 6.8.0-84.84~22.04.1) but 5.15.0.48.48 is to be installed
-                          Recommends: ubuntu-kernel-accessories but it is not installable
-
+```bash linux-generic-hwe-22.04 : Depends: linux-image-generic-hwe-22.04 (= 6.8.0-84.84~22.04.1) but 5.15.0.48.48 is to be installed Depends: linux-headers-generic-hwe-22.04 (= 6.8.0-84.84~22.04.1) but 5.15.0.48.48 is to be installed Recommends: ubuntu-kernel-accessories but it is not installable```
 
 - Some packages needed to be manually updated before an update to Ubunutu 22.04 via UI or CLI is possible.
 - Use the following command:
