@@ -25,8 +25,8 @@ sudo apt update && sudo apt upgrade -y
 - Ensures the system is fully up to date before the release upgrade.
 - Not strictly required, but helps to minimize issues during the upgrade.
 
-3. Remove unused packages
-```bash sudo apt autoremove -y ```
+## 3. Remove unused packages
+```bash sudo apt autoremove -y```
 
 - Cleans up orphaned dependencies that are no longer needed.
 - Helps to prevent conflicts during the release upgrade and frees disk space.
