@@ -17,3 +17,17 @@ sudo apt update && sudo apt upgrade -y
 
 
 ## 2. Perform a distribution upgrade
+
+```bash sudo apt dist-upgrade -y```
+
+
+- Executes a more complete upgrade that may add or remove packages if required by new dependencies.
+- Ensures the system is fully up to date before the release upgrade.
+- Not strictly required, but helps to minimize issues during the upgrade.
+
+3. Remove unused packages
+```bash sudo apt autoremove -y ```
+
+- Cleans up orphaned dependencies that are no longer needed.
+- Helps to prevent conflicts during the release upgrade and frees disk space.
+- Not mandatory, but improves system cleanliness before upgrading.
