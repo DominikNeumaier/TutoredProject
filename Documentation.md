@@ -4,6 +4,14 @@ Since **ROS 2 Jazzy** is only supported on Ubuntu 24.04, the PC must first be up
 
 ---
 
+## 0. Before You Start
+- You can directly upgrade to Ubuntu 24.04 LTS ("Noble Numbat") from either Ubuntu 22.04 LTS ("Jammy Jellyfish") or Ubuntu 23.10 ("Mantic Minotaur").
+- Upgrades will not be available immediately following the release of Ubuntu 24.04 LTS. Upgrades from Ubuntu 23.10 will be enabled shortly after the release, once any known upgrade issues are resolved. Upgrades from Ubuntu 22.04 LTS are not enabled until the release of Ubuntu 24.04.1 LTS. This is currently scheduled for August 2024.
+- Be sure that you have all updates applied to your current version of Ubuntu before you upgrade.
+- Before upgrading it is recommended that you read the release notes for Ubuntu 24.04 LTS, which document caveats and workarounds for known issues in this version.
+
+If you have a version of Ubuntu other than 22.04 LTS or 23.10, please see UpgradeNotes for information on how to upgrade.
+
 ## 1. Update package lists and installed packages
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -31,3 +39,20 @@ sudo apt update && sudo apt upgrade -y
 - Cleans up orphaned dependencies that are no longer needed.
 - Helps to prevent conflicts during the release upgrade and frees disk space.
 - Not mandatory, but improves system cleanliness before upgrading.
+
+## 4. Upgrading Ubuntu Deskop 22.04 LTS to 24.04 LTS
+
+1. Run the update-manager application.
+2. In Update Manager, click the Settings... button, and enter your password to start the Software Sources application.
+3. Select the sub menu Updates from the Software Sources application.
+4. Confirm the "Notify me of a new Ubuntu version:" option is set to "For any new version", and change it if otherwise.
+5. Close the Software Sources application and return to Update Manager.
+6. In Update Manager, click the Check button to check for new updates.
+7. If there are any updates to install, use the Install Updates button to install them.
+8. Run update-manager.
+9. If you want to upgrade early, before upgrades are officially supported, you can pass the -d option when running update-manager. Do this at your own risk. It is advised to check the release notes for Ubuntu 24.04 LTS before doing so.
+10. A message will appear informing you of the availability of the new release.
+11. Click Upgrade.
+12. Follow the on-screen instructions.
+
+(Credits: https://help.ubuntu.com/community/NobleUpgrades#Upgrading_Ubuntu_Desktops_to_24.04_LTS)
