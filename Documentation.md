@@ -96,4 +96,6 @@ Installation of ROS2-jazzy according to the following tutorial was sucessfull on
 https://automaticaddison.com/how-to-install-ros-2-jazzy/
 
 Installing Gazobo according to the same tutorial. 
+Installation was sucessfull. Demo are working. 
+To start gazebo: gz sim
 
