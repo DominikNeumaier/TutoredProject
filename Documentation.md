@@ -1,4 +1,4 @@
-# Update of the Windows PC (Ubuntu 22.04 → 24.04)
+# Update of the Linux PC (Ubuntu 22.04 → 24.04)
 
 Since **ROS 2 Jazzy** is only supported on Ubuntu 24.04, the PC must first be upgraded from Ubuntu 22.04 (Jammy) to Ubuntu 24.04 (Noble).
 
@@ -76,3 +76,21 @@ An error occured:
 (Credits: https://help.ubuntu.com/community/NobleUpgrades#Upgrading_Ubuntu_Desktops_to_24.04_LTS)
 
 
+## 5. Fresh installation for a PC
+
+- ISO Image runtergeladen UBunutu Seite 
+- balenaEtcher für Flashing USB Stick
+
+
+
+# Installation of ROS2 Jazzy for Ubuntu 24.04
+
+Since **ROS 2 Jazzy** is only supported on Ubuntu 24.04, the installation can now be executed.
+
+---
+
+## 1. Downloading Scripts
+
+- Two scripts are available in folder (ros2 scripts)
+- Downloading these scripts onto our new installed Ubunutu 24.04 computer
+- Executing these scripts using the following command
