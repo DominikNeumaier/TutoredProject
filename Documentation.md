@@ -99,3 +99,4 @@ Installing Gazobo according to the same tutorial.
 Installation was sucessfull. Demo are working. 
 To start gazebo: gz sim
 
+### State 01.10: Gazebo and ROS are up and running but not interconnected. Problems with installing ros-jazzy-gazebo-ros-pkgs
