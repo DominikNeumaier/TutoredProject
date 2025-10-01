@@ -100,3 +100,49 @@ Installation was sucessfull. Demo are working.
 To start gazebo: gz sim
 
 ### State 01.10: Gazebo and ROS are up and running but not interconnected. Problems with installing ros-jazzy-gazebo-ros-pkgs
+
+
+
+
+
+
+# Trying Reinforcement Learning Demo on new Ubunutu and ROS2 installation with Gazebo
+
+## 1. Installation 
+
+- Following this: https://github.com/tomasvr/turtlebot3_drlnav?tab=readme-ov-file#installation
+
+- Using manual installation (Not Docker)
+- Removing nvidia-container-toolkit
+
+- sudo apt python 3
+- sudo apt install python3-pip
+
+## 2. Installing Gazebo
+
+- Connecting Gazebo to ROS2 Jazzy
+
+-  ROS2-Gazebo Bridge installieren
+sudo apt install ros-jazzy-ros-gz
+- Demo-Pakete installieren
+bashsudo apt install ros-jazzy-ros-core ros-jazzy-geometry2
+- ROS2 Jazzy sourcen
+source /opt/ros/jazzy/setup.bash
+- Gazebo-ROS2 Verbindung testen
+Option A: Mit dem neuen Gazebo Sim (empfohlen)
+Starte eine einfache Welt:
+gz sim shapes.sdf
+In einem zweiten Terminal, teste die ROS2-Verbindung:
+source /opt/ros/jazzy/setup.bash
+ros2 topic list
+
+- Ab hier starten mit installing Python3, Pytorch in der Dokumentation
+
+- Python packages installiert um Konflikte zwischen apt und pip zu umgehen
+    - Hinzufügen von --break-system-packages nach den Befehlen im Tutorial --> Versionen entfernen da veraltet (torch zB)
+    
+- Nvidida installation
+
+- Downloading the code base and building
+    - Use sudo apt-get install ros-jazzy-turtlebot3-description instead of foxxy
+    - src Pfad angepast zu ros update wo jazzy nun liegt und jazzy ergänzt
