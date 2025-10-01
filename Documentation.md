@@ -78,8 +78,11 @@ An error occured:
 
 ## 5. Fresh installation for a PC
 
-- ISO Image runtergeladen UBunutu Seite 
+- ISO Image runtergeladen UBunutu Seite Link: 
 - balenaEtcher für Flashing USB Stick
+- Screenshot des Kopievorgangs
+
+
 
 
 
@@ -89,8 +92,7 @@ Since **ROS 2 Jazzy** is only supported on Ubuntu 24.04, the installation can no
 
 ---
 
-## 1. Downloading Scripts
+# 1. Installation 
 
-- Two scripts are available in folder (ros2 scripts)
-- Downloading these scripts onto our new installed Ubunutu 24.04 computer
-- Executing these scripts using the following command
+https://automaticaddison.com/how-to-install-ros-2-jazzy/
+
