@@ -78,13 +78,11 @@ An error occured:
 
 ## 5. Fresh installation for a PC
 
+Since manual upgrading from 22 to 24 lead to some errors, a fresh installation of UBUNTU24 was done. The required ISO image was downloaded and flashed with balenaEtcher. Afterwards the PC was rebooted with that fresh destribution which was sucessfull. 
+
 - ISO Image runtergeladen UBunutu Seite Link: 
 - balenaEtcher für Flashing USB Stick
 - Screenshot des Kopievorgangs
-
-
-
-
 
 # Installation of ROS2 Jazzy for Ubuntu 24.04
 
@@ -94,5 +92,8 @@ Since **ROS 2 Jazzy** is only supported on Ubuntu 24.04, the installation can no
 
 # 1. Installation 
 
+Installation of ROS2-jazzy according to the following tutorial was sucessfull on the "fresh" UBUNTU24 versions. 
 https://automaticaddison.com/how-to-install-ros-2-jazzy/
+
+Installing Gazobo according to the same tutorial. 
 
