@@ -1,3 +1,14 @@
+# Initial situation
+
+- PCs mit Ubuntu 22.04 und ROS2 Humble sowie Gazebo 11 (Classic)
+- Turtlebot 3 mit Ubuntu 22.04 
+- Ziel: Upgrade des Rechners auf 24.04 und ROS2 Jazzy
+- Verwendung einer neuen Version von Gazebo (Harmonic)?
+- Validierung der neuen Versionen mit der Simulation
+- Updaten des Turtlebot3 auf neue ROS & Ubunut Version
+
+
+
 # Update of the Linux PC (Ubuntu 22.04 → 24.04)
 
 Since **ROS 2 Jazzy** is only supported on Ubuntu 24.04, the PC must first be upgraded from Ubuntu 22.04 (Jammy) to Ubuntu 24.04 (Noble).
