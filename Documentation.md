@@ -130,11 +130,31 @@ To start gazebo: gz sim
 
 
 
-# Überprüfen ob der Turtlebot3 mit veralteter ROS und Ubuntu Version nun mit dem Rechner mit neuer Software als Node funktioniert
+# Simulation - Überprüfen ob der Turtlebot3 mit veralteter ROS und Ubuntu Version nun mit dem Rechner mit neuer Software als Node funktioniert
 
 - Simulation funktioniert, daher weitermachen
+- Verwendung der einfachen Navigation via Pfeiltasten (https://seafile.unistra.fr/lib/ea938cb8-ad06-43c2-928f-077ff7b1a944/file/turtlebot3_demos/turtlebot3_navigation_demo.md)
+
+- Doku dazu ist auf der Webseite ausführlicher
+    - https://emanual.robotis.com/docs/en/platform/turtlebot3/slam/#run-slam-node
+    - PC Setup wurde vorhin bereits durchgeführt
+    - Hardware unverändert wie vor 2 Jahren (1x sudo apt update nach Start aufgrund WiFi Probleme)
+    - Bringup konfiguriert: https://emanual.robotis.com/docs/en/platform/turtlebot3/bringup/#bringup auf dem Turtlebot
+
+- Es funktioniert nicht (siehe Screenshot wo der Prozess abbricht)
 
 
+# Upgrading Turtlebot 3 to Ubunutu 24.04 and Gazebo Harmonic
+- Backup via SD Karte
+- Erneutes testen der Simulation mit dem Keyboard https://emanual.robotis.com/docs/en/platform/turtlebot3/basic_operation/#basic-operation
+
+
+
+# Trying Machine Learning with 
+- https://emanual.robotis.com/docs/en/platform/turtlebot3/machine_learning/#machine-learning
+- Check how we get it to the robot at the end
+- We only have to 
+- How is the communication between the nodes working
 
 # Trying Reinforcement Learning Demo on new Ubunutu and ROS2 installation with Gazebo
 
