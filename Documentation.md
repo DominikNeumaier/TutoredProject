@@ -176,3 +176,15 @@ ros2 topic list
 - Downloading the code base and building
     - Use sudo apt-get install ros-jazzy-turtlebot3-description instead of foxxy
     - src Pfad angepast zu ros update wo jazzy nun liegt und jazzy ergänzt
+ 
+# Trying to steer the pyshical TurtleBot
+  
+Validation that the following set up works: 
+
+- Ubuntu PC: 24.04 and ROS Jazzy 
+- Ubuntu version TurtleBot: 22.04 and ROS Humble
+  
+- Problem: TurtleBot has no IP adress, is not registered in the WLAN network.
+- Therefore not reachable via SSH
+- Robot is connected with Screen and keyboard, IP problem not resolvable 
+  
