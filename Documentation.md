@@ -95,7 +95,7 @@ Since manual upgrading from 22 to 24 lead to some errors, a fresh installation o
 - balenaEtcher für Flashing USB Stick
 - Screenshot des Kopievorgangs
 
-# Installation of ROS2 Jazzy for Ubuntu 24.04
+# Installation of ROS2 Jazzy & Gazebo Harmonic for Ubuntu 24.04
 
 Since **ROS 2 Jazzy** is only supported on Ubuntu 24.04, the installation can now be executed.
 
@@ -113,7 +113,26 @@ To start gazebo: gz sim
 ### State 01.10: Gazebo and ROS are up and running but not interconnected. Problems with installing ros-jazzy-gazebo-ros-pkgs
 
 
+# Validating Installation by using Turtlebot 3 Simulation
 
+
+- Zuerst PC Setup: https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
+
+- Vor Start der Simulation mit dem Burger Turtlebot noch source ~/.bashrc  
+- Vor Start der Keyboard Kontrolle in das Verzeichnis wechseln mit cd und dann nochmal source ~/.bashrc  dann kann man starten
+- https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/
+
+- DRLNAV Demo not working due to dependencies (Screenshot) to old Gazebo Classic (11.0) version
+- Using the documentation to try a new simulation to check whether ROS2 Jazzy and Gazebo Harmonic work together on Ubuntu 24.04
+- Simulation is used for Turtlebot 3
+
+- Screenshot von der Demo anhängen
+
+
+
+# Überprüfen ob der Turtlebot3 mit veralteter ROS und Ubuntu Version nun mit dem Rechner mit neuer Software als Node funktioniert
+
+- Simulation funktioniert, daher weitermachen
 
 
 
