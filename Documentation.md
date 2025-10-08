@@ -144,10 +144,20 @@ To start gazebo: gz sim
 - Es funktioniert nicht (siehe Screenshot wo der Prozess abbricht)
 
 
-# Upgrading Turtlebot 3 to Ubunutu 24.04 and Gazebo Harmonic
-- Backup via SD Karte
+# SD Card Backup of turtlebot3
+- Backup der SD-Karte
+    - MicroSD Karte aus dem Turlebot entnehmen und mit Adapter mit dem PC verbinden
+    - nach Anleitung aber leicht andere Befehle: https://seafile.unistra.fr/lib/ea938cb8-ad06-43c2-928f-077ff7b1a944/file/turtlebot3_demos/BackupRestore_SDCard.md
+        - lsblk | grep 'writable\|system-boot'
+        - sudo umount /dev/sdb1  sudo umount /dev/sdb2
+        - sudo dd if=/dev/sdb of=./rpi5_rpit_tir4street.img status=progress
+        - sync
+        - Restliche befehle identisch zur Anleitung durchgeführt bis zum Kapitel Restore the image, das wurde nicht durchgeführt
 - Erneutes testen der Simulation mit dem Keyboard https://emanual.robotis.com/docs/en/platform/turtlebot3/basic_operation/#basic-operation
 
+
+# Upgrading Turtlebot 3 to Ubunutu 24.04 and Gazebo Harmonic
+- 
 
 
 # Trying Machine Learning with 
