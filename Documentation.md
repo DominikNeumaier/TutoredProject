@@ -157,7 +157,12 @@ To start gazebo: gz sim
 
 
 # Upgrading Turtlebot 3 to Ubunutu 24.04 and Gazebo Harmonic
-- 
+- Following the Instructions: https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/#sbc-setup
+
+
+
+# Checking whether remote control via keyboard control
+
 
 
 # Trying Machine Learning with 
@@ -165,6 +170,9 @@ To start gazebo: gz sim
 - Check how we get it to the robot at the end
 - We only have to 
 - How is the communication between the nodes working
+
+
+
 
 # Trying Reinforcement Learning Demo on new Ubunutu and ROS2 installation with Gazebo
 
