@@ -224,5 +224,12 @@ Validation that the following set up works:
   
 - Problem: TurtleBot has no IP adress, is not registered in the WLAN network.
 - Therefore not reachable via SSH
-- Robot is connected with Screen and keyboard, IP problem not resolvable 
+- Robot is connected with Screen and keyboard, IP problem not resolvable
+
+# Installing UBUNTU 24 on the Turtle-Bot
+
+- saving the current image of the SD card
+- Using the Raspberry Pi imager to follow this tutorial: https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/
+- SD card hard to be unmounted to successfully follow the process
+- UBUNTU SERVER 24.04.3 LTS (64-Bit) is written on the SD card
   
