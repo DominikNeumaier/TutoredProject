@@ -1,3 +1,36 @@
+# Initial Situation and Approach
+
+## Initial Situation
+
+The project started with the following hardware and software configuration:
+
+- PC workstations running Ubuntu 22.04, ROS2 Humble, and Gazebo 11 Classic
+- Turtlebot 3 robot operating on Ubuntu 22.04 with ROS2 Humble
+
+This configuration represented the existing infrastructure at Telecom Physique Strasbourg. However, with the release of newer versions of the core software components, an upgrade was necessary to take advantage of improved features, better performance, and long-term support.
+
+## Project Approach
+
+The upgrade strategy was designed as a phased implementation to minimize risks and validate each step before proceeding to the next phase. This methodical approach ensured system stability and allowed for troubleshooting at each stage.
+
+The first phase involves upgrading the PC workstations to Ubuntu 24.04 and ROS2 Jazzy, including the transition from Gazebo 11 Classic to Gazebo Harmonic. This allows the development environment to be modernized while keeping the physical robot operational.
+
+A critical question emerges at this point: can ROS2 Jazzy and ROS2 Humble communicate with each other? To answer this, the second phase conducts simulations while keeping the physical Turtlebot 3 on its original Ubuntu 22.04 and ROS2 Humble configuration. This validates cross-version compatibility through controlled testing.
+
+Once cross-version compatibility is confirmed, the physical Turtlebot 3 is upgraded to Ubuntu 24.04 and ROS2 Jazzy to match the PC workstation configuration. Additional simulations are then performed with matching software versions across all components to ensure the system operates correctly.
+
+With the upgraded infrastructure validated, machine learning experiments are conducted on the Turtlebot 3 system. The final validation step involves testing the trained machine learning model in real-world scenarios to assess its performance outside the simulation environment and verify that the entire system functions as intended in practical applications.
+
+## Table of Contents
+
+1. [Phase 1: PC Workstation Upgrade](#phase-1-pc-workstation-upgrade)
+2. [Phase 2: Cross-Version Compatibility Testing](#phase-2-cross-version-compatibility-testing)
+3. [Phase 3: Turtlebot 3 Hardware Upgrade](#phase-3-turtlebot-3-hardware-upgrade)
+4. [Phase 4: Full System Validation](#phase-4-full-system-validation)
+5. [Phase 5: Machine Learning Implementation](#phase-5-machine-learning-implementation)
+6. [Phase 6: Real-World Validation](#phase-6-real-world-validation)
+
+
 # Initial situation
 
 - PCs mit Ubuntu 22.04 und ROS2 Humble sowie Gazebo 11 (Classic)
