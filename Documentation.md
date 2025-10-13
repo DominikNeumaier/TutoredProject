@@ -265,4 +265,15 @@ Validation that the following set up works:
 - Using the Raspberry Pi imager to follow this tutorial: https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/
 - SD card hard to be unmounted to successfully follow the process
 - UBUNTU SERVER 24.04.3 LTS (64-Bit) is written on the SD card
+
+# Visualize the LIDAR SCAN
+
+On the TurtleBot vis SSH:
+1. ros2 launch turtlebot3_bringup robot.launch.py
+2. (To see the values): ros2 topic echo /scan 
+
+On the PC:
+rviz2 
+-> Global Options: BaseScan
+-> LaserScan, Topic, Relicability Polica : BestEffort
   
