@@ -276,4 +276,15 @@ On the PC:
 rviz2 
 -> Global Options: BaseScan
 -> LaserScan, Topic, Relicability Polica : BestEffort
-  
+
+# interim status (17.10)
+-> PC and TurtleBot were successfully upgraded 
+-> The TurtleBot can be steered via PC and SSH, Lidar and camera are wokring
+-> next step: ML capabilities 
+
+# Machine Learning 
+Following this tutorial: https://emanual.robotis.com/docs/en/platform/turtlebot3/machine_learning/#software-setup
+9.1: Problems with building the hls_lfcd_lds_driver for the turtlebot 
+    -> node parameteres needed to be upgraded 
+    -> rebuilt afterwards successfull 
+    -> all 18 packages were installed 
