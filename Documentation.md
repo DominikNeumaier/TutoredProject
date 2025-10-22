@@ -288,3 +288,18 @@ Following this tutorial: https://emanual.robotis.com/docs/en/platform/turtlebot3
     -> node parameteres needed to be upgraded 
     -> rebuilt afterwards successfull 
     -> all 18 packages were installed 
+
+# Model Training
+Four terminals required. The following commands need to be executed (in the respective folder)
+
+1. /turtlebot3_ws/install/turtlebot3_gazebo:
+   ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
+   
+2. /turtlebot3_ws/install/:
+   ros2 run turtlebot3_dqn dqn_environment 1
+   
+3. /turtlebot3_ws/install/turtlebot3_dqn:
+   ros 2 run turtlebot3_dqn dqn_gazebo 1
+   
+4. /turtlebot3_ws/:
+   ros2 run turtlebot3_dqn dqn_agent 1 1000 (stage + anzahl episoden) 
