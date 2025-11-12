@@ -309,6 +309,10 @@ Four terminals required. The following commands need to be executed (in the resp
 
 # Training wieder zum Laufen gebracht
 
+- Zurücksetzen von Python Path und Python Home
+- unset PYTHONHOME
+unset PYTHONPATH
+
 - Wie in der Anleitung
  $ cd ~/turtlebot3_ws/src/
  $ git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_machine_learning.git
@@ -316,11 +320,18 @@ Four terminals required. The following commands need to be executed (in the resp
  $ export PIP_BREAK_SYSTEM_PACKAGES=1
 
 
+- In das Verzeichnis noch folgendes reinpacken
+  git clone https://github.com/ROBOTIS-GIT/turtlebot3_simulations
+  git clone https://github.com/ROBOTIS-GIT/turtlebot3_msgs
+  git clone https://github.com/ROBOTIS-GIT/turtlebot3
+
+
 - Anlage venv in Ordner src und dort installieren der dependencies:
  $ cd ~/turtlebot3_ws && rosdep install --from-paths src --ignore-src
 
 - Zudem noch folgende Versionen / Pakete installieren im venv:
 
+[ros2run]: Interrupt
 (venv) ros@c138-pc12:~/turtlebot3_ws$ pip list
 Package                              Version     Editable project location
 ------------------------------------ ----------- ---------------------------------------------
@@ -428,7 +439,7 @@ markdown-it-py                       4.0.0
 MarkupSafe                           3.0.3
 mdurl                                0.1.2
 message-filters                      4.11.8
-ml-dtypes                            0.4.1
+ml-dtypes                            0.3.2
 my-test-package                      1.0         /home/ros/turtlebot3_ws/build/my-test-package
 namex                                0.1.0
 nav-2d-msgs                          1.3.9
@@ -437,7 +448,7 @@ nav2-common                          1.3.9
 nav2-msgs                            1.3.9
 nav2-simple-commander                1.0.0
 notify2                              0.3.1
-numpy                                1.26.4
+numpy                                1.26.1
 opt_einsum                           3.4.0
 optree                               0.17.0
 osrf-pycommon                        2.1.7
@@ -546,7 +557,7 @@ std-msgs                             5.3.6
 std-srvs                             5.3.6
 stereo-msgs                          5.3.6
 teleop-twist-keyboard                2.4.1
-tensorboard                          2.17.1
+tensorboard                          2.17.0
 tensorboard-data-server              0.7.2
 tensorflow                           2.17.1      /home/ros/turtlebot3_ws/build/tensorflow
 termcolor                            3.2.0
@@ -576,21 +587,67 @@ Werkzeug                             3.1.3
 wheel                                0.45.1
 wrapt                                2.0.1
 xacro                                2.1.1
+(venv) ros@c138-pc12:~/turtlebot3_ws$ 
+
+
+
+
+
+- Anpassen der Lidar Einstellungen für Training
+
+Set state
+State is an observation of environment and describes the current situation. Here, state_size is 26 and has 24 LDS values, distance to goal, and angle to goal.
+LDS values use a forward 180-degree range, so you need 48 values in a 360-degree range.
+
+Turtlebot3’s LDS default is set to 360. You can modify sample of LDS at /turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf.
+
+gedit ~/turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf
+<sensor name="hls_lfcd_lds" type="ray">    # Find the "hls_lfcd_lds"
+  <visualize>true</visualize>    # Visualization of LDS. If you don't want to see LDS, set to `false`
+<scan>
+  <horizontal>
+    <samples>360</samples>    # The number of sample. Modify it to 48!
+    <resolution>1.000000</resolution>
+    <min_angle>0.000000</min_angle>
+    <max_angle>6.280000</max_angle>
+  </horizontal>
+</scan>
+Note
+More lidar points can be used, but they require more computing resources. To use a different number of lidar points, replace state_size in Hyper parameter.
+
+
 
 
 
 - Danach:
 
-- colcon build --symlink-install
+- Aktivieren des venvs und dann mit aktivem venv
+- ~/turtlebot3_ws colcon build --symlink-install
+
+--> Fehlermeldungen ignorieren
+
 
 Quell-Setup-Skript ausführen:
 Nach dem Build musst du das ROS2-Setup-Skript ausführen, um sicherzustellen, dass die Umgebungsvariablen richtig gesetzt sind:
 
+
 source ~/turtlebot3_ws/install/setup.bash
 
-Versuche erneut, das Paket auszuführen:
 
- -/turtlebot3_ws/   ros2 run turtlebot3_dqn dqn_agent 1 1000
+
+- Versuche erneut, das Paket auszuführen:
+
+1. /turtlebot3_ws/install/turtlebot3_gazebo:
+   ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
+   
+2. /turtlebot3_ws/install/:
+   ros2 run turtlebot3_dqn dqn_environment 1
+   
+3. /turtlebot3_ws/install/turtlebot3_dqn:
+   ros 2 run turtlebot3_dqn dqn_gazebo 1
+
+4. Training starten
+/turtlebot3_ws/   ros2 run turtlebot3_dqn dqn_agent 1 1000
 
     
 
