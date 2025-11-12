@@ -637,17 +637,17 @@ source ~/turtlebot3_ws/install/setup.bash
 
 - Versuche erneut, das Paket auszuführen:
 
-1. /turtlebot3_ws/install/turtlebot3_gazebo:
+1. (venv) /turtlebot3_ws/install/turtlebot3_gazebo:
    ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
    
-2. /turtlebot3_ws/install/:
+2. (venv) /turtlebot3_ws/install/:
    ros2 run turtlebot3_dqn dqn_environment 1
    
-3. /turtlebot3_ws/install/turtlebot3_dqn:
+3. (venv) /turtlebot3_ws/install/turtlebot3_dqn:
    ros 2 run turtlebot3_dqn dqn_gazebo 1
 
 4. Training starten
-/turtlebot3_ws/   ros2 run turtlebot3_dqn dqn_agent 1 1000
+(venv) /turtlebot3_ws/   ros2 run turtlebot3_dqn dqn_agent 1 1000
 
     
 
