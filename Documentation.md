@@ -302,4 +302,299 @@ Four terminals required. The following commands need to be executed (in the resp
    ros 2 run turtlebot3_dqn dqn_gazebo 1
    
 4. /turtlebot3_ws/:
-   ros2 run turtlebot3_dqn dqn_agent 1 1000 (stage + anzahl episoden) 
+   ros2 run turtlebot3_dqn dqn_agent 1 1000 (stage + anzahl episoden)
+
+
+
+
+# Training wieder zum Laufen gebracht
+
+- Wie in der Anleitung
+ $ cd ~/turtlebot3_ws/src/
+ $ git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_machine_learning.git
+ $ sudo rosdep update
+ $ export PIP_BREAK_SYSTEM_PACKAGES=1
+
+
+- Anlage venv in Ordner src und dort installieren der dependencies:
+ $ cd ~/turtlebot3_ws && rosdep install --from-paths src --ignore-src
+
+- Zudem noch folgende Versionen / Pakete installieren im venv:
+
+(venv) ros@c138-pc12:~/turtlebot3_ws$ pip list
+Package                              Version     Editable project location
+------------------------------------ ----------- ---------------------------------------------
+absl-py                              2.3.1
+ackermann-msgs                       2.0.2
+action-msgs                          2.0.3
+action-tutorials-interfaces          0.33.7
+action-tutorials-py                  0.33.7
+actionlib-msgs                       5.3.6
+actuator-msgs                        0.0.1
+ament-cmake-test                     2.5.4
+ament-copyright                      0.17.3
+ament-cppcheck                       0.17.3
+ament-cpplint                        0.17.3
+ament-flake8                         0.17.3
+ament-index-python                   1.8.1
+ament-lint                           0.17.3
+ament-lint-cmake                     0.17.3
+ament-package                        0.16.4
+ament-pep257                         0.17.3
+ament-uncrustify                     0.17.3
+ament-xmllint                        0.17.3
+angles                               1.16.1
+argcomplete                          3.6.3
+astunparse                           1.6.3
+bond                                 4.1.2
+builtin-interfaces                   2.0.3
+cartographer-ros-msgs                2.0.9003
+catkin-pkg                           1.1.0
+certifi                              2025.11.12
+charset-normalizer                   3.4.4
+colcon-argcomplete                   0.3.3
+colcon-bash                          0.5.0
+colcon-cd                            0.1.1
+colcon-cmake                         0.2.29
+colcon-common-extensions             0.3.0
+colcon-core                          0.20.1
+colcon-defaults                      0.2.9
+colcon-devtools                      0.3.0
+colcon-library-path                  0.2.1
+colcon-metadata                      0.2.5
+colcon-notification                  0.3.0
+colcon-output                        0.2.13
+colcon-package-information           0.4.0
+colcon-package-selection             0.2.10
+colcon-parallel-executor             0.4.0
+colcon-pkg-config                    0.1.0
+colcon-powershell                    0.4.0
+colcon-python-setup-py               0.2.9
+colcon-recursive-crawl               0.2.3
+colcon-ros                           0.5.0
+colcon-test-result                   0.3.8
+colcon-zsh                           0.5.0
+composition-interfaces               2.0.3
+control-msgs                         5.5.0
+controller-manager                   4.38.0
+controller-manager-msgs              4.38.0
+coverage                             7.11.3
+cv-bridge                            4.1.0
+demo-nodes-py                        0.33.7
+diagnostic-msgs                      5.3.6
+diagnostic-updater                   4.2.6
+distlib                              0.4.0
+docutils                             0.22.3
+domain-coordinator                   0.12.0
+dwb-msgs                             1.3.9
+dynamixel-sdk                        3.8.4
+empy                                 4.2
+example-interfaces                   0.12.0
+examples-rclpy-executors             0.19.6
+examples-rclpy-minimal-action-client 0.19.6
+examples-rclpy-minimal-action-server 0.19.6
+examples-rclpy-minimal-client        0.19.6
+examples-rclpy-minimal-publisher     0.19.6
+examples-rclpy-minimal-service       0.19.6
+examples-rclpy-minimal-subscriber    0.19.6
+flatbuffers                          25.9.23
+gast                                 0.6.0
+generate-parameter-library-py        0.5.0
+geographic-msgs                      1.0.6
+geometry-msgs                        5.3.6
+google-pasta                         0.2.0
+gps-msgs                             2.1.1
+grpcio                               1.76.0
+h5py                                 3.15.1
+idna                                 3.11
+image-geometry                       4.1.0
+iniconfig                            2.3.0
+interactive-markers                  2.5.5
+joint-state-publisher                2.4.0
+keras                                3.9.2
+laser-geometry                       2.7.2
+launch                               3.4.7
+launch-ros                           0.26.9
+launch-testing                       3.4.7
+launch-testing-ros                   0.26.9
+launch-xml                           3.4.7
+launch-yaml                          3.4.7
+libclang                             18.1.1
+lifecycle-msgs                       2.0.3
+logging-demo                         0.33.7
+map-msgs                             2.4.1
+Markdown                             3.10
+markdown-it-py                       4.0.0
+MarkupSafe                           3.0.3
+mdurl                                0.1.2
+message-filters                      4.11.8
+ml-dtypes                            0.4.1
+my-test-package                      1.0         /home/ros/turtlebot3_ws/build/my-test-package
+namex                                0.1.0
+nav-2d-msgs                          1.3.9
+nav-msgs                             5.3.6
+nav2-common                          1.3.9
+nav2-msgs                            1.3.9
+nav2-simple-commander                1.0.0
+notify2                              0.3.1
+numpy                                1.26.4
+opt_einsum                           3.4.0
+optree                               0.17.0
+osrf-pycommon                        2.1.7
+packaging                            25.0
+pal-statistics                       2.7.0
+pal-statistics-msgs                  2.7.0
+pcl-msgs                             1.0.0
+pendulum-msgs                        0.33.7
+pip                                  24.0
+pluggy                               1.6.0
+protobuf                             4.25.8
+Pygments                             2.19.2
+pyparsing                            3.2.5
+pyqtgraph                            0.13.7
+pytest                               9.0.0
+pytest-cov                           7.0.0
+pytest-repeat                        0.9.4
+pytest-rerunfailures                 16.1
+python-dateutil                      2.9.0.post0
+python-qt-binding                    2.2.2
+PyYAML                               6.0.3
+qt-dotgraph                          2.7.5
+qt-gui                               2.7.5
+qt-gui-cpp                           2.7.5
+qt-gui-py-common                     2.7.5
+quality-of-service-demo-py           0.33.7
+rcl-interfaces                       2.0.3
+rclpy                                7.1.5
+rcutils                              6.7.4
+requests                             2.32.5
+resource-retriever                   3.4.4
+rich                                 14.2.0
+rmw-dds-common                       3.1.0
+robot-localization                   3.8.3
+ros-gz-bridge                        1.0.16
+ros-gz-interfaces                    1.0.16
+ros-gz-sim                           1.0.16
+ros2action                           0.32.6
+ros2bag                              0.26.9
+ros2bag-mcap-cli                     0.26.9
+ros2bag-sqlite3-cli                  0.26.9
+ros2cli                              0.32.6
+ros2component                        0.32.6
+ros2controlcli                       4.38.0
+ros2doctor                           0.32.6
+ros2interface                        0.32.6
+ros2launch                           0.26.9
+ros2lifecycle                        0.32.6
+ros2multicast                        0.32.6
+ros2node                             0.32.6
+ros2param                            0.32.6
+ros2pkg                              0.32.6
+ros2run                              0.32.6
+ros2service                          0.32.6
+ros2topic                            0.32.6
+rosbag2-interfaces                   0.26.9
+rosbag2-py                           0.26.9
+rosgraph-msgs                        2.0.3
+rosidl-adapter                       4.6.6
+rosidl-cli                           4.6.6
+rosidl-cmake                         4.6.6
+rosidl-generator-c                   4.6.6
+rosidl-generator-cpp                 4.6.6
+rosidl-generator-py                  0.22.2
+rosidl-generator-type-description    4.6.6
+rosidl-parser                        4.6.6
+rosidl-pycommon                      4.6.6
+rosidl-runtime-py                    0.13.1
+rosidl-typesupport-c                 3.2.2
+rosidl-typesupport-cpp               3.2.2
+rosidl-typesupport-fastrtps-c        3.6.2
+rosidl-typesupport-fastrtps-cpp      3.6.2
+rosidl-typesupport-introspection-c   4.6.6
+rosidl-typesupport-introspection-cpp 4.6.6
+rpyutils                             0.4.2
+rqt                                  1.6.1
+rqt-action                           2.2.0
+rqt-bag                              1.5.5
+rqt-bag-plugins                      1.5.5
+rqt-console                          2.2.1
+rqt-graph                            1.5.5
+rqt-gui                              1.6.1
+rqt-gui-py                           1.6.1
+rqt-msg                              1.5.1
+rqt-plot                             1.4.4
+rqt-publisher                        1.7.2
+rqt-py-common                        1.6.1
+rqt-py-console                       1.2.2
+rqt-reconfigure                      1.6.2
+rqt-service-caller                   1.2.1
+rqt-shell                            1.2.2
+rqt-srv                              1.2.2
+rqt-topic                            1.7.3
+scipy                                1.16.3
+sensor-msgs                          5.3.6
+sensor-msgs-py                       5.3.6
+service-msgs                         2.0.3
+setuptools                           79.0.1
+shape-msgs                           5.3.6
+six                                  1.17.0
+slam-toolbox                         2.8.3
+smclib                               4.1.2
+sros2                                0.13.4
+statistics-msgs                      2.0.3
+std-msgs                             5.3.6
+std-srvs                             5.3.6
+stereo-msgs                          5.3.6
+teleop-twist-keyboard                2.4.1
+tensorboard                          2.17.1
+tensorboard-data-server              0.7.2
+tensorflow                           2.17.1      /home/ros/turtlebot3_ws/build/tensorflow
+termcolor                            3.2.0
+tf-transformations                   1.1.0
+tf2-geometry-msgs                    0.36.14
+tf2-kdl                              0.36.14
+tf2-msgs                             0.36.14
+tf2-py                               0.36.14
+tf2-ros-py                           0.36.14
+tf2-sensor-msgs                      0.36.14
+tf2-tools                            0.36.14
+theora-image-transport               4.0.6
+topic-monitor                        0.33.7
+trajectory-msgs                      5.3.6
+turtlebot3_dqn                       1.0.1       /home/ros/turtlebot3_ws/build/turtlebot3_dqn
+turtlebot3-example                   2.3.3
+turtlebot3-msgs                      2.4.0
+turtlebot3-teleop                    2.3.3
+turtlesim                            1.8.3
+type-description-interfaces          2.0.3
+typing_extensions                    4.15.0
+unique-identifier-msgs               2.5.0
+urllib3                              2.5.0
+vision-msgs                          4.1.1
+visualization-msgs                   5.3.6
+Werkzeug                             3.1.3
+wheel                                0.45.1
+wrapt                                2.0.1
+xacro                                2.1.1
+
+
+
+- Danach:
+
+- colcon build --symlink-install
+
+Quell-Setup-Skript ausführen:
+Nach dem Build musst du das ROS2-Setup-Skript ausführen, um sicherzustellen, dass die Umgebungsvariablen richtig gesetzt sind:
+
+source ~/turtlebot3_ws/install/setup.bash
+
+Versuche erneut, das Paket auszuführen:
+
+ -/turtlebot3_ws/   ros2 run turtlebot3_dqn dqn_agent 1 1000
+
+    
+
+
+  
+
+ $ colcon build --symlink-install
