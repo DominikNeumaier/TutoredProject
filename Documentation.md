@@ -649,6 +649,49 @@ source ~/turtlebot3_ws/install/setup.bash
 4. Training starten
 (venv) /turtlebot3_ws/   ros2 run turtlebot3_dqn dqn_agent 1 1000
 
+
+
+
+# Trainierted Modell abrufen
+
+- Verwendung
+
+- Versuche erneut, das Paket auszuführen:
+
+1. (venv) /turtlebot3_ws/install/turtlebot3_gazebo:
+   ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage1.launch.py
+   
+2. (venv) /turtlebot3_ws/install/:
+   ros2 run turtlebot3_dqn dqn_environment 1
+   
+3. (venv) /turtlebot3_ws/install/turtlebot3_dqn:
+   ros 2 run turtlebot3_dqn dqn_gazebo 1
+
+After training, to test the trained model, run test node instead of DQN agent node.
+4. $ ros2 run turtlebot3_dqn dqn_test {$stage_num} {$load_episode}
+
+--> Verwendung bereits trainiertes modell mit Stage 1 und 600 Episoden
+
+
+
+# Betrieb Turtlebot mit Modell
+
+
+- SSH verbinden mit ubunut 192.168.42.212
+  PW: ros
+
+
+  $ export TURTLEBOT3_MODEL=burger
+$ ros2 launch turtlebot3_bringup robot.launch.py
+
+- Lidar scanner noch umstellen:
+
+- offen
+
+
+
+--> Roboter läuft von selbst in dem Falle direkt los
+
     
 
 
