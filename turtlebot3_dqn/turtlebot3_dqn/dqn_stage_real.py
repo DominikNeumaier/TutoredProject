@@ -1,13 +1,4 @@
 
-    
-    
-#!/usr/bin/env python3
-#################################################################################
-# Copyright 2019 ROBOTIS CO., LTD.
-# Adapted for REAL HARDWARE (Virtual Stage Manager) 
-# Optimized for 2m x 2m Arena
-#################################################################################
-
 import random
 import sys
 import math
