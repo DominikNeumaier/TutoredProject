@@ -117,9 +117,12 @@ class DQNAgent(Node):
     def __init__(self):
         super().__init__('dqn_agent')
         
-        # --- ADDED: Counter for tracking state fixes ---
-        self.wrong_state_counter = 0
-        # -----------------------------------------------
+        # --- ADDED: Tracking for state fixes ---
+        self.total_fix_counter = 0      # Counts affected episodes, not individual fixes
+        self.affected_episodes = set()  # Stores unique episodes where fixes occurred
+        self.current_episode = 0        # Tracks current episode number
+        self.fix_applied_in_this_episode = False # Flag to ensure counter increases only once per episode
+        # ---------------------------------------
 
         self.declare_parameter('epsilon_decay', 6000)
         self.declare_parameter('max_training_episodes', 1000)
@@ -225,9 +228,12 @@ class DQNAgent(Node):
         
         # Check if we received 182 values (Distance + Angle + 180 LiDAR)
         if len(flat_state) == 182:
-            self.wrong_state_counter += 1
-            if self.wrong_state_counter % 100 == 0:
-                print(f"[FIX] Detected 182 input values. Downsampling to 26... (Total fixes: {self.wrong_state_counter})")
+            # --- MODIFIED: Track counts ONLY ONCE per episode ---
+            if not self.fix_applied_in_this_episode:
+                self.total_fix_counter += 1
+                self.affected_episodes.add(self.current_episode)
+                self.fix_applied_in_this_episode = True
+            # ----------------------------------------------------
             
             # The first 2 are Distance and Angle
             dist = flat_state[0]
@@ -275,10 +281,13 @@ class DQNAgent(Node):
         episode_num = self.load_episode
 
         for episode in range(self.load_episode + 1, self.max_training_episodes + 1):
+            # --- ADDED: Update current episode and reset flag ---
+            self.current_episode = episode
+            self.fix_applied_in_this_episode = False
+            # ----------------------------------------------------
+
             state = self.reset_environment()
-            # --- ADDED: Adapt state if necessary ---
             state = self.adapt_state_vector(state)
-            # ---------------------------------------
             
             episode_num += 1
             local_step = 0
@@ -295,9 +304,8 @@ class DQNAgent(Node):
 
                 action = int(self.get_action(state))
                 next_state, reward, done = self.step(action)
-                # --- ADDED: Adapt state if necessary ---
+                
                 next_state = self.adapt_state_vector(next_state)
-                # ---------------------------------------
 
                 score += reward
 
@@ -326,11 +334,16 @@ class DQNAgent(Node):
                             )
                         self.dqn_reward_metric.reset_states()
 
+                    # --- MODIFIED: Print statement ---
                     print(
                         'Episode:', episode,
                         'score:', score,
                         'memory length:', len(self.replay_memory),
-                        'epsilon:', self.epsilon)
+                        'epsilon:', self.epsilon,
+                        'affected_episodes_count:', self.total_fix_counter,
+                        'affected_episodes_list:', sorted(list(self.affected_episodes))
+                    )
+                    # ---------------------------------
 
                     param_keys = ['epsilon', 'step_counter', 'trained_episodes']
                     param_values = [self.epsilon, self.step_counter, episode]
