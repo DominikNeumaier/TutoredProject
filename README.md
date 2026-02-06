@@ -4,7 +4,7 @@ This project documents the upgrade of the TurtleBot3 ecosystem from ROS 2 Humble
 
 ## Documentation
 
-> **Note:** This README provides a technical overview of the repository structure and usage. For detailed step-by-step installation guides, hardware setup, and theoretical background, please refer to the full **Project Documentation PDF**. 
+> **Note:** This README provides a technical overview of the repository structure and usage. For detailed step-by-step installation guides, hardware setup, and theoretical background, please refer to the full **Project Documentation PDF** (available upon request). 
 
 ## System Architecture
 
@@ -28,18 +28,21 @@ git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
 # ... install dependencies ...
 ```
 
-### 2. Custom Nodes for Physical Deployment
+### 2. Custom Nodes for Training and Physical Deployment
 
-To enable the Reinforcement Learning agent to run on the **physical robot**, this repository contains custom extensions to the standard package. We developed a "Real World" environment wrapper that bridges the gap between the simulation-based code and real hardware.
+To enable the Reinforcement Learning agent to run on the **physical robot**, this repository contains custom extensions to the standard package. We developed a fix to ensure a smooth training process in Gazebo and a "Real World" environment wrapper that bridges the gap between the simulation-based code and real hardware.
 
-**Files added/modified:**
+Files added/modified:
 
-* `dqn_environment_real.py`: Handles sensor data processing (LiDAR downsampling) and reward calculation based on real-world telemetry
-* `dqn_stage_real.py`: Acts as a virtual referee, generating virtual goals relative to the robot's odometry since absolute world coordinates do not exist in the real room
+* **`dqn_agent_training.py`**: A modified version of the standard training agent. It includes critical bug fixes (handling random LiDAR shape mismatches) to ensure the training process in Gazebo does not crash.
+    * *Note:* This file is intended **only for Phase 1 (Simulation Training)**. Do not use this for the physical robot deployment.
+* **`dqn_environment_real.py`**: Handles sensor data processing (LiDAR downsampling) and reward calculation based on real-world telemetry.
+* **`dqn_stage_real.py`**: Acts as a virtual referee, generating virtual goals relative to the robot's odometry since absolute world coordinates do not exist in the real room.
+
 
 **Integration:**
 
-To use these nodes, simply replace or extend the `turtlebot3_dqn` directory in your workspace with the one provided in this repository.
+To use these nodes, simply replace or extend the nodes in `turtlebot3_dqn` directory in your workspace with the one provided in this repository.
 
 ```bash
 # Navigate to your workspace
@@ -53,9 +56,10 @@ cp -r /path/to/this/repo/turtlebot3_dqn/turtlebot3_dqn/ .
 
 ## Usage
 
+
 ### Phase 1: Training in Simulation
 
-**This phase uses the standard ROBOTIS implementation without modifications.**
+**This phase uses the standard ROBOTIS implementation with modification to the dqn_training.py .**
 
 We used release **v1.0.1** from the official repository:
 ```bash
@@ -65,6 +69,11 @@ git clone -b jazzy https://github.com/ROBOTIS-GIT/turtlebot3_machine_learning/tr
 For detailed training instructions, parameters, and potential updates to the training procedure, please refer to the official ROBOTIS e-Manual:
 
 **[ROBOTIS TurtleBot3 Machine Learning Guide](https://emanual.robotis.com/docs/en/platform/turtlebot3/machine_learning/#machine-learning)**
+
+**Note on Standard Implementation:**
+While this phase generally uses the standard ROBOTIS implementation, we encountered issues with the original `dqn_agent.py` in the Jazzy/Harmonic release (specifically regarding library imports and LiDAR shape mismatches).
+
+* **Recommendation:** Use the `dqn_agent.py` provided in this repository. It contains necessary fixes to prevent crashes during long training sessions in Gazebo.
 
 > **Note:** Training procedures and hyperparameters may have changed since v1.0.1. Always consult the official documentation for the most up-to-date training workflow.
 
@@ -112,11 +121,12 @@ ros2 run turtlebot3_dqn dqn_test 1 600
 ```plaintext
 .
 ├── README.md
-├── docs/                       # Project Documentation & Reports
-└── turtlebot3_dqn/             # Custom Source Code
+├── docs/                        # Project Documentation & Reports
+└── turtlebot3_dqn/              # Custom Source Code
     └── turtlebot3_dqn/
         ├── dqn_environment_real.py  # [NEW] Real-world logic
         ├── dqn_stage_real.py        # [NEW] Virtual goal manager
+        ├── dqn_agent.py             # [NEW] Modified training agent (Simulation fixes)
         ├── dqn_agent.py             # Standard agent (refactored imports)
         ├── dqn_test.py              # Inference node
         └── ...
