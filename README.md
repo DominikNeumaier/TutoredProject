@@ -90,7 +90,7 @@ ros2 run turtlebot3_dqn dqn_environment 1
 ros2 run turtlebot3_dqn dqn_agent 1 1000
 ```
 
-### Phase 2: Physical Deployment (Real World) - **Custom Contribution**
+### Phase 2: Physical Deployment (Real World)
 
 After validating the model in simulation, deploy it to the physical robot. Ensure the PC and TurtleBot3 are in the same ROS Domain.
 
