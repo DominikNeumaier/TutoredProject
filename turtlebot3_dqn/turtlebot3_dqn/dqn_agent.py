@@ -15,7 +15,7 @@
 # limitations under the License.
 #################################################################################
 #
-# Authors: Ryan Shim, Gilbert, ChanHyeong Lee
+# Authors: Ryan Shim, Gilbert, ChanHyeong Lee, Hyungyu Kim
 
 import collections
 import datetime
@@ -31,52 +31,127 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray
 from std_srvs.srv import Empty
-import tensorflow
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Input
-from tensorflow.keras.losses import MeanSquaredError
-from tensorflow.keras.models import load_model
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam
 
 from turtlebot3_msgs.srv import Dqn
 
 
-tensorflow.config.set_visible_devices([], 'GPU')
-
 LOGGING = True
 current_time = datetime.datetime.now().strftime('[%mm%dd-%H:%M]')
+_tensorflow = None
+_Dense = None
+_Input = None
+_MeanSquaredError = None
+_load_model = None
+_Sequential = None
+_Adam = None
 
 
-class DQNMetric(tensorflow.keras.metrics.Metric):
+def _import_tensorflow():
+    try:
+        import tensorflow
+        from tensorflow.keras.layers import Dense
+        from tensorflow.keras.layers import Input
+        from tensorflow.keras.losses import MeanSquaredError
+        from tensorflow.keras.models import load_model
+        from tensorflow.keras.models import Sequential
+        from tensorflow.keras.optimizers import Adam
+        return (
+            tensorflow,
+            Dense,
+            Input,
+            MeanSquaredError,
+            load_model,
+            Sequential,
+            Adam
+        )
+    except ImportError as e:
+        print(f'Error importing TensorFlow: {e}', file=sys.stderr)
+        print('Please ensure TensorFlow is properly installed.', file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f'Fatal error during TensorFlow import: {e}', file=sys.stderr)
+        print('This may be due to missing system libraries or incompatible versions.',
+              file=sys.stderr)
+        sys.exit(1)
 
-    def __init__(self, name='dqn_metric'):
-        super(DQNMetric, self).__init__(name=name)
-        self.loss = self.add_weight(name='loss', initializer='zeros')
-        self.episode_step = self.add_weight(name='step', initializer='zeros')
 
-    def update_state(self, y_true, y_pred=0, sample_weight=None):
-        self.loss.assign_add(y_true)
-        self.episode_step.assign_add(1)
+def _ensure_tensorflow():
+    global _tensorflow, _Dense, _Input, _MeanSquaredError, _load_model, _Sequential, _Adam
+    if _tensorflow is None:
+        (_tensorflow,
+         _Dense,
+         _Input,
+         _MeanSquaredError,
+         _load_model,
+         _Sequential,
+         _Adam) = _import_tensorflow()
 
-    def result(self):
-        return self.loss / self.episode_step
 
-    def reset_states(self):
-        self.loss.assign(0)
-        self.episode_step.assign(0)
+def _create_dqn_metric_class():
+    _ensure_tensorflow()
+    base_class = _tensorflow.keras.metrics.Metric
+
+    class DQNMetric(base_class):
+
+        def __init__(self, name='dqn_metric'):
+            super(DQNMetric, self).__init__(name=name)
+            self.loss = self.add_weight(name='loss', initializer='zeros')
+            self.episode_step = self.add_weight(name='step', initializer='zeros')
+
+        def update_state(self, y_true, y_pred=0, sample_weight=None):
+            self.loss.assign_add(y_true)
+            self.episode_step.assign_add(1)
+
+        def result(self):
+            return self.loss / self.episode_step
+
+        def reset_states(self):
+            self.loss.assign(0)
+            self.episode_step.assign(0)
+
+    return DQNMetric
 
 
 class DQNAgent(Node):
 
-    def __init__(self, stage_num, max_training_episodes):
+    def __init__(self):
         super().__init__('dqn_agent')
+        
+        # --- ADDED: Tracking for state fixes ---
+        self.total_fix_counter = 0      # Counts affected episodes, not individual fixes
+        self.affected_episodes = set()  # Stores unique episodes where fixes occurred
+        self.current_episode = 0        # Tracks current episode number
+        self.fix_applied_in_this_episode = False # Flag to ensure counter increases only once per episode
+        # ---------------------------------------
 
-        self.stage = int(stage_num)
+        self.declare_parameter('epsilon_decay', 6000)
+        self.declare_parameter('max_training_episodes', 1000)
+        self.declare_parameter('model_file', '')
+        self.declare_parameter('use_gpu', False)
+        self.declare_parameter('verbose', True)
+        self.max_training_episodes = self.get_parameter(
+            'max_training_episodes'
+        ).get_parameter_value().integer_value
+        model_file = self.get_parameter('model_file').get_parameter_value().string_value
+        use_gpu = self.get_parameter('use_gpu').get_parameter_value().bool_value
+        self.verbose = self.get_parameter('verbose').get_parameter_value().bool_value
+
+        DQNMetric = _create_dqn_metric_class()
+        _ensure_tensorflow()
+        self.tf = _tensorflow
+        self.Dense = _Dense
+        self.Input = _Input
+        self.MeanSquaredError = _MeanSquaredError
+        self.load_model = _load_model
+        self.Sequential = _Sequential
+        self.Adam = _Adam
+
+        if not use_gpu:
+            self.tf.config.set_visible_devices([], 'GPU')
+
         self.train_mode = True
         self.state_size = 26
         self.action_size = 5
-        self.max_training_episodes = int(max_training_episodes)
 
         self.done = False
         self.succeed = False
@@ -86,7 +161,9 @@ class DQNAgent(Node):
         self.learning_rate = 0.0007
         self.epsilon = 1.0
         self.step_counter = 0
-        self.epsilon_decay = 6000 * self.stage
+        self.epsilon_decay = self.get_parameter(
+            'epsilon_decay'
+        ).get_parameter_value().integer_value
         self.epsilon_min = 0.05
         self.batch_size = 128
 
@@ -94,39 +171,45 @@ class DQNAgent(Node):
         self.min_replay_memory_size = 5000
 
         self.model = self.create_qnetwork()
-        self.target_model = self.create_qnetwork()
-        self.update_target_model()
-        self.update_target_after = 5000
-        self.target_update_after_counter = 0
-
-        self.load_model = False
+        self.use_pretrained_model = bool(model_file)
         self.load_episode = 0
         self.model_dir_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
             'saved_model'
         )
-        self.model_path = os.path.join(
+        model_path = os.path.join(
             self.model_dir_path,
-            'stage' + str(self.stage) + '_episode' + str(self.load_episode) + '.h5'
+            model_file
         )
+        if self.use_pretrained_model:
+            self.model.set_weights(self.load_model(model_path).get_weights())
+            json_path = model_path.replace('.h5', '.json')
+            if os.path.exists(json_path):
+                with open(json_path) as outfile:
+                    param = json.load(outfile)
+                    self.epsilon = param.get('epsilon', self.epsilon)
+                    self.step_counter = param.get('step_counter', self.step_counter)
+                    self.load_episode = param.get('trained_episodes', self.load_episode)
+                if self.load_episode >= self.max_training_episodes:
+                    self.get_logger().error('Loaded model episode exceeds max training episodes.')
+                    raise ValueError('Loaded model episode exceeds max training episodes.')
+            else:
+                self.get_logger().warn(
+                    f'JSON file not found for {model_file}, using default values.'
+                )
 
-        if self.load_model:
-            self.model.set_weights(load_model(self.model_path).get_weights())
-            with open(os.path.join(
-                self.model_dir_path,
-                'stage' + str(self.stage) + '_episode' + str(self.load_episode) + '.json'
-            )) as outfile:
-                param = json.load(outfile)
-                self.epsilon = param.get('epsilon')
-                self.step_counter = param.get('step_counter')
+        self.target_model = self.create_qnetwork()
+        self.update_target_after = 5000
+        self.target_update_after_counter = 0
+        self.update_target_model()
 
         if LOGGING:
-            tensorboard_file_name = current_time + ' dqn_stage' + str(self.stage) + '_reward'
+            tensorboard_file_name = current_time + ' dqn_reward'
             home_dir = os.path.expanduser('~')
             dqn_reward_log_dir = os.path.join(
                 home_dir, 'turtlebot3_dqn_logs', 'gradient_tape', tensorboard_file_name
             )
-            self.dqn_reward_writer = tensorflow.summary.create_file_writer(dqn_reward_log_dir)
+            self.dqn_reward_writer = self.tf.summary.create_file_writer(dqn_reward_log_dir)
             self.dqn_reward_metric = DQNMetric()
 
         self.rl_agent_interface_client = self.create_client(Dqn, 'rl_agent_interface')
@@ -138,6 +221,59 @@ class DQNAgent(Node):
 
         self.process()
 
+    # --- ADDED: Method to fix state size mismatch ---
+    def adapt_state_vector(self, state):
+        # state is typically (1, N) array
+        flat_state = state[0]
+        
+        # Check if we received 182 values (Distance + Angle + 180 LiDAR)
+        if len(flat_state) == 182:
+            # --- MODIFIED: Track counts ONLY ONCE per episode ---
+            if not self.fix_applied_in_this_episode:
+                self.total_fix_counter += 1
+                self.affected_episodes.add(self.current_episode)
+                self.fix_applied_in_this_episode = True
+            # ----------------------------------------------------
+            
+            # The first 2 are Distance and Angle
+            dist = flat_state[0]
+            angle = flat_state[1]
+            
+            # The remaining 180 are LiDAR
+            lidar_raw = flat_state[2:]
+            
+            new_lidar = []
+            target_lidar_count = 24
+            
+            # Downsample 180 -> 24 (Factor ~7.5)
+            chunk_size = len(lidar_raw) / target_lidar_count 
+            
+            for i in range(target_lidar_count):
+                start_idx = int(i * chunk_size)
+                end_idx = int((i + 1) * chunk_size)
+                
+                # Safety check
+                if start_idx >= len(lidar_raw):
+                    new_lidar.append(3.5)
+                    continue
+                    
+                segment = lidar_raw[start_idx:end_idx]
+                
+                if len(segment) > 0:
+                    # Use MIN for safety (closest obstacle)
+                    new_lidar.append(min(segment))
+                else:
+                    new_lidar.append(lidar_raw[start_idx] if start_idx < len(lidar_raw) else 3.5)
+            
+            # Reconstruct: [Dist, Angle] + [24 LiDAR]
+            fixed_state = [dist, angle] + new_lidar
+            
+            # Reshape back to (1, 26)
+            return numpy.reshape(numpy.array(fixed_state), [1, 26])
+            
+        return state
+    # ------------------------------------------------
+
     def process(self):
         self.env_make()
         time.sleep(1.0)
@@ -145,7 +281,14 @@ class DQNAgent(Node):
         episode_num = self.load_episode
 
         for episode in range(self.load_episode + 1, self.max_training_episodes + 1):
+            # --- ADDED: Update current episode and reset flag ---
+            self.current_episode = episode
+            self.fix_applied_in_this_episode = False
+            # ----------------------------------------------------
+
             state = self.reset_environment()
+            state = self.adapt_state_vector(state)
+            
             episode_num += 1
             local_step = 0
             score = 0
@@ -156,11 +299,14 @@ class DQNAgent(Node):
             while True:
                 local_step += 1
 
-                q_values = self.model.predict(state)
+                q_values = self.model.predict(state, verbose=self.verbose)
                 sum_max_q += float(numpy.max(q_values))
 
                 action = int(self.get_action(state))
                 next_state, reward, done = self.step(action)
+                
+                next_state = self.adapt_state_vector(next_state)
+
                 score += reward
 
                 msg = Float32MultiArray()
@@ -183,19 +329,24 @@ class DQNAgent(Node):
                     if LOGGING:
                         self.dqn_reward_metric.update_state(score)
                         with self.dqn_reward_writer.as_default():
-                            tensorflow.summary.scalar(
+                            self.tf.summary.scalar(
                                 'dqn_reward', self.dqn_reward_metric.result(), step=episode_num
                             )
                         self.dqn_reward_metric.reset_states()
 
+                    # --- MODIFIED: Print statement ---
                     print(
                         'Episode:', episode,
                         'score:', score,
                         'memory length:', len(self.replay_memory),
-                        'epsilon:', self.epsilon)
+                        'epsilon:', self.epsilon,
+                        'affected_episodes_count:', self.total_fix_counter,
+                        'affected_episodes_list:', sorted(list(self.affected_episodes))
+                    )
+                    # ---------------------------------
 
-                    param_keys = ['epsilon', 'step']
-                    param_values = [self.epsilon, self.step_counter]
+                    param_keys = ['epsilon', 'step_counter', 'trained_episodes']
+                    param_values = [self.epsilon, self.step_counter, episode]
                     param_dictionary = dict(zip(param_keys, param_values))
                     break
 
@@ -203,17 +354,21 @@ class DQNAgent(Node):
 
             if self.train_mode:
                 if episode % 100 == 0:
-                    self.model_path = os.path.join(
-                        self.model_dir_path,
-                        'stage' + str(self.stage) + '_episode' + str(episode) + '.h5')
-                    self.model.save(self.model_path)
-                    with open(
-                        os.path.join(
+                    idx = 1
+                    while True:
+                        model_path = os.path.join(
                             self.model_dir_path,
-                            'stage' + str(self.stage) + '_episode' + str(episode) + '.json'
-                        ),
-                        'w'
-                    ) as outfile:
+                            f'model{idx}.h5'
+                        )
+                        json_path = os.path.join(
+                            self.model_dir_path,
+                            f'model{idx}.json'
+                        )
+                        if not os.path.exists(model_path):
+                            break
+                        idx += 1
+                    self.model.save(model_path)
+                    with open(json_path, 'w') as outfile:
                         json.dump(param_dictionary, outfile)
 
     def env_make(self):
@@ -251,9 +406,9 @@ class DQNAgent(Node):
             if lucky > (1 - self.epsilon):
                 result = random.randint(0, self.action_size - 1)
             else:
-                result = numpy.argmax(self.model.predict(state))
+                result = numpy.argmax(self.model.predict(state, verbose=self.verbose))
         else:
-            result = numpy.argmax(self.model.predict(state))
+            result = numpy.argmax(self.model.predict(state, verbose=self.verbose))
 
         return result
 
@@ -280,13 +435,15 @@ class DQNAgent(Node):
         return next_state, reward, done
 
     def create_qnetwork(self):
-        model = Sequential()
-        model.add(Input(shape=(self.state_size,)))
-        model.add(Dense(512, activation='relu'))
-        model.add(Dense(256, activation='relu'))
-        model.add(Dense(128, activation='relu'))
-        model.add(Dense(self.action_size, activation='linear'))
-        model.compile(loss=MeanSquaredError(), optimizer=Adam(learning_rate=self.learning_rate))
+        model = self.Sequential()
+        model.add(self.Input(shape=(self.state_size,)))
+        model.add(self.Dense(512, activation='relu'))
+        model.add(self.Dense(256, activation='relu'))
+        model.add(self.Dense(128, activation='relu'))
+        model.add(self.Dense(self.action_size, activation='linear'))
+        model.compile(
+            loss=self.MeanSquaredError(),
+            optimizer=self.Adam(learning_rate=self.learning_rate))
         model.summary()
 
         return model
@@ -306,11 +463,11 @@ class DQNAgent(Node):
 
         current_states = numpy.array([transition[0] for transition in data_in_mini_batch])
         current_states = current_states.squeeze()
-        current_qvalues_list = self.model.predict(current_states)
+        current_qvalues_list = self.model.predict(current_states, verbose=self.verbose)
 
         next_states = numpy.array([transition[3] for transition in data_in_mini_batch])
         next_states = next_states.squeeze()
-        next_qvalues_list = self.target_model.predict(next_states)
+        next_qvalues_list = self.target_model.predict(next_states, verbose=self.verbose)
 
         x_train = []
         y_train = []
@@ -334,8 +491,8 @@ class DQNAgent(Node):
         y_train = numpy.reshape(y_train, [len(data_in_mini_batch), self.action_size])
 
         self.model.fit(
-            tensorflow.convert_to_tensor(x_train, tensorflow.float32),
-            tensorflow.convert_to_tensor(y_train, tensorflow.float32),
+            self.tf.convert_to_tensor(x_train, self.tf.float32),
+            self.tf.convert_to_tensor(y_train, self.tf.float32),
             batch_size=self.batch_size, verbose=0
         )
         self.target_update_after_counter += 1
@@ -345,13 +502,9 @@ class DQNAgent(Node):
 
 
 def main(args=None):
-    if args is None:
-        args = sys.argv
-    stage_num = args[1] if len(args) > 1 else '1'
-    max_training_episodes = args[2] if len(args) > 2 else '1000'
     rclpy.init(args=args)
 
-    dqn_agent = DQNAgent(stage_num, max_training_episodes)
+    dqn_agent = DQNAgent()
     rclpy.spin(dqn_agent)
 
     dqn_agent.destroy_node()
